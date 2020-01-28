@@ -22,7 +22,7 @@ public class PlayerFootsteps : MonoBehaviour
     void Awake()
     {
         footstep_Sound = GetComponent<AudioSource>();
-        character_Controller = GetComponent<CharacterController>();
+        character_Controller = GetComponentInParent<CharacterController>();
     }
 
 
@@ -36,6 +36,23 @@ public class PlayerFootsteps : MonoBehaviour
     {
         if (!character_Controller.isGrounded)
             return;
+
+        if (character_Controller.velocity.sqrMagnitude > 0)
+        {
+            accumulated_Distance += Time.deltaTime;
+            if (accumulated_Distance > step_distance)
+            {
+                footstep_Sound.volume = Random.Range(volume_Min, volume_Max);
+                footstep_Sound.clip = footstep_Clip[Random.Range(0, footstep_Clip.Length)];
+                footstep_Sound.Play();
+                accumulated_Distance = 0f;
+            }
+        }
+        else
+        {
+            accumulated_Distance = 0f;
+
+        }
     }
 
 
