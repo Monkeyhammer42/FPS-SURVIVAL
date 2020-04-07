@@ -14,8 +14,10 @@ public class PlayerAttack : MonoBehaviour
     private Camera mainCam;
     private GameObject crosshair;
     private bool is_Aiming;
-
-
+    [SerializeField]
+    private GameObject arrowprefab, spearPrefab;
+    [SerializeField]
+    private Transform arrowBowStartPosition;
     void Awake()
     {
         weapon_Manager = GetComponent<WeaponManager>();
@@ -47,6 +49,7 @@ public class PlayerAttack : MonoBehaviour
             {
                 nextTimeToFire = Time.time + 1f / fireRate;
                 weapon_Manager.GetCurrentSelectedWeapon().ShootAnimation();
+                BulletFired();
             }
         }
         else
@@ -60,7 +63,8 @@ public class PlayerAttack : MonoBehaviour
                 if (weapon_Manager.GetCurrentSelectedWeapon().bulletType == WeaponBulletType.BULLET)
                 {
                     weapon_Manager.GetCurrentSelectedWeapon().ShootAnimation();
-                   // BulletFired();
+                    
+                  BulletFired();
                 }
                 else
                 {
@@ -69,10 +73,10 @@ public class PlayerAttack : MonoBehaviour
                         weapon_Manager.GetCurrentSelectedWeapon().ShootAnimation();
                         if (weapon_Manager.GetCurrentSelectedWeapon().bulletType == WeaponBulletType.ARROW)
                         {
-
+                            ThrowArrowOrSpear(true);
                         }else if(weapon_Manager.GetCurrentSelectedWeapon().bulletType== WeaponBulletType.SPEAR)
                         {
-
+                            ThrowArrowOrSpear(false);
                         }
                     }
                 }
@@ -90,16 +94,20 @@ public class PlayerAttack : MonoBehaviour
     }
     void ZoomInAndOut()
     {
+        
         if (weapon_Manager.GetCurrentSelectedWeapon().weapon_Aim == WeaponAim.AIM)
         {
+            
             if (Input.GetMouseButtonDown(1))
             {
+                
                 zoomCameraAnim.Play(AnimationTags.ZOOM_IN_ANIM);
                 crosshair.SetActive(false);
 
             }
             if (Input.GetMouseButtonUp(1))
             {
+
                 zoomCameraAnim.Play(AnimationTags.ZOOM_OUT_ANIM);
                 crosshair.SetActive(true);
 
@@ -123,6 +131,31 @@ public class PlayerAttack : MonoBehaviour
         }
         
     }
-
+    void ThrowArrowOrSpear(bool throwArrow)
+    {
+        if (throwArrow)
+        {
+            GameObject arrow = Instantiate(arrowprefab);
+            arrow.transform.position = arrowBowStartPosition.position;
+            arrow.GetComponent<ArrowANdBowScript>().Launch(mainCam);
+        }
+        else
+        {
+            GameObject spear = Instantiate(spearPrefab);
+            spear.transform.position = arrowBowStartPosition.position;
+            spear.GetComponent<ArrowANdBowScript>().Launch(mainCam);
+        }
+    }
+    void BulletFired()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(mainCam.transform.position,mainCam.transform.forward,out hit))
+        {
+            if (hit.transform.tag == Tags.ENEMY_TAG)
+            {
+                hit.transform.GetComponent<HealthScript>().ApplyDamage(damage);
+            }
+        }
+    }
 
 }

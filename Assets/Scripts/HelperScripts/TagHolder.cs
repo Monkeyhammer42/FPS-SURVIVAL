@@ -20,9 +20,9 @@ public class AnimationTags
     public const string SHOOT_TRIGGER = "Shoot";
     public const string AIM_PERAMETER = "Aim";
 
-    public const string WALK_PERAMETER = "Walk";
-    public const string RUN_PERAMETER = "Run";
-    public const string ATTACK_TRIGGER = "Attack";
+    public const string WALK_PERAMETER = "ZombieWalk";
+    public const string RUN_PERAMETER = "ZombieRun";
+    public const string ATTACK_TRIGGER = "ZombieAttack";
     public const string DEAD_TRIGGER = "Dead";
 }
 public class Tags
